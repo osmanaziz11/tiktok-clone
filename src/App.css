@@ -1,0 +1,25 @@
+.video__container::-webkit-scrollbar {
+  display: none;
+}
+
+.app__logo {
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 1.3em;
+  animation: tiktok 500ms linear infinite;
+}
+@keyframes tiktok {
+  0%,
+  100% {
+    text-shadow: -1.5px -1.5px 0 #0ff, 1.5px 1.5px 0 #f00;
+  }
+  25% {
+    text-shadow: 1.5px 1.5px 0 #0ff, -1.5px -1.5px 0 #f00;
+  }
+  50% {
+    text-shadow: 1.5px -1.5px 0 #0ff, 1.5px -1.5px 0 #f00;
+  }
+  75% {
+    text-shadow: -1.5px 1.5px 0 #0ff, -1.5px 1.5px 0 #f00;
+  }
+}
