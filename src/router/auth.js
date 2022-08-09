@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const tiktok_users = require('../db/models/users');
+const tiktok_users_profile = require('../db/models/profile');
 
 async function isValid(val) {
   const result = await tiktok_users.findOne({ Username: val });
@@ -35,7 +36,9 @@ router.post('/create-account', async (req, res) => {
   req.body.Password = await securePassword(req.body.Password);
   try {
     const usersColletion = new tiktok_users(req.body);
+    const userProfile = new tiktok_users_profile(req.body);
     const insertRecord = await usersColletion.save();
+    const insertProfile = await userProfile.save();
     res
       .status(201)
       .send({ message: 'Insert record successfully.', record: insertRecord });
@@ -63,4 +66,55 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// fetch profile info followers following description
+router.get('/:username', async (req, res) => {
+  const userID = req.params.username;
+  try {
+    const result = await tiktok_users_profile.find({ Username: userID });
+    res.status(200).send({ message: 'Profile Retreived', record: result });
+  } catch (error) {
+    res.status(403).send({ message: error.message, record: undefined });
+  }
+});
+
+// update profile info followers status following
+router.post('/update-profile/:username', async (req, res) => {
+  const userID = req.params.username;
+  try {
+    const userProfile = await tiktok_users_profile.find({ Username: userID });
+    const { _id } = userProfile[0];
+    const result = await tiktok_users_profile.findByIdAndUpdate(_id, req.body, {
+      new: true,
+    });
+    res.status(200).send({
+      message: 'Update user profile successfully',
+      record: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: 'Error updating user profile',
+      record: undefined,
+      error: error,
+    });
+  }
+});
+
+// search users
+router.get('/users/:key', async function (req, res) {
+  const key = req.params.key;
+  console.log(key);
+  try {
+    const result = await tiktok_users.find({
+      Username: { $regex: '^' + key, $options: 'i' },
+    });
+    res.status(200).send({
+      message: 'User search successfully',
+      record: result,
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ message: 'Error searching users', record: undefined });
+  }
+});
 module.exports = router;
