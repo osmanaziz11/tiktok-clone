@@ -1,4 +1,4 @@
-.video__container::-webkit-scrollbar {
+.app::-webkit-scrollbar {
   display: none;
 }
 
