@@ -1,12 +1,20 @@
-.app::-webkit-scrollbar {
+.content__container::-webkit-scrollbar {
   display: none;
 }
-
+.app__container {
+  height: 90%;
+}
+.content__container {
+  height: 92%;
+}
 .app__logo {
   color: #fff;
   font-family: sans-serif;
   font-size: 1.3em;
   animation: tiktok 500ms linear infinite;
+}
+.nav__container {
+  height: 8%;
 }
 @keyframes tiktok {
   0%,
