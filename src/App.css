@@ -5,7 +5,7 @@
   height: 90%;
 }
 .content__container {
-  height: 92%;
+  height: 530px;
 }
 .app__logo {
   color: #fff;
@@ -30,4 +30,35 @@
   75% {
     text-shadow: -1.5px 1.5px 0 #0ff, -1.5px 1.5px 0 #f00;
   }
+}
+
+/* ======= Profile Screen ========== */
+.media__container::-webkit-scrollbar {
+  display: none;
+}
+.media__container {
+  height: calc(100% - 258px);
+}
+.img__container {
+  height: 110px;
+}
+.img__container .img__box {
+  width: 90px;
+  height: 90px;
+}
+.img__container .img__box img {
+  width: 100%;
+  clip-path: circle();
+  height: 100%;
+  cursor: pointer;
+  object-fit: cover;
+  object-position: top;
+}
+.media {
+  height: 170px !important;
+}
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
