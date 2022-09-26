@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const tiktok_users = require('../db/models/users');
-const tiktok_users_profile = require('../db/models/profile');
+const tiktok__Users = require('../db/models/users');
 
 async function isValid(val) {
-  const result = await tiktok_users.findOne({ Username: val });
+  const result = await tiktok__Users.findOne({ Username: val });
   if (result != null) {
     return false;
   } else {
@@ -33,24 +32,20 @@ router.post('/check-username', async (req, res) => {
 
 // To create new account
 router.post('/create-account', async (req, res) => {
-  req.body.Password = await securePassword(req.body.Password);
+  req.body.Password = await securePassword(req.body.Credentials.Password);
   try {
-    const usersColletion = new tiktok_users(req.body);
-    const userProfile = new tiktok_users_profile(req.body);
-    const insertRecord = await usersColletion.save();
-    const insertProfile = await userProfile.save();
-    res
-      .status(201)
-      .send({ message: 'Insert record successfully.', record: insertRecord });
+    const users = new tiktok__Users(req.body);
+    await users.save();
+    res.status(201).send({ message: 'Insert record successfully.', status: 1 });
   } catch (error) {
-    res.status(403).send({ message: error.message, record: undefined });
+    res.status(403).send({ message: error.message, status: 0 });
   }
 });
 
 // To login into app
 router.post('/login', async (req, res) => {
   try {
-    const result = await tiktok_users.find({ Username: req.body.Username });
+    const result = await tiktok__Users.find({ Username: req.body.Username });
     if (result.length > 0) {
       if (await comparePassword(req.body.Password, result[0].Password)) {
         const token = jwt.sign({ user: result }, process.env.JWT_APP_SECRET);
@@ -70,7 +65,7 @@ router.post('/login', async (req, res) => {
 router.get('/:username', async (req, res) => {
   const userID = req.params.username;
   try {
-    const result = await tiktok_users_profile.find({ Username: userID });
+    const result = await tiktok__Users_profile.find({ Username: userID });
     res.status(200).send({ message: 'Profile Retreived', record: result });
   } catch (error) {
     res.status(403).send({ message: error.message, record: undefined });
@@ -81,11 +76,15 @@ router.get('/:username', async (req, res) => {
 router.post('/update-profile/:username', async (req, res) => {
   const userID = req.params.username;
   try {
-    const userProfile = await tiktok_users_profile.find({ Username: userID });
+    const userProfile = await tiktok__Users_profile.find({ Username: userID });
     const { _id } = userProfile[0];
-    const result = await tiktok_users_profile.findByIdAndUpdate(_id, req.body, {
-      new: true,
-    });
+    const result = await tiktok__Users_profile.findByIdAndUpdate(
+      _id,
+      req.body,
+      {
+        new: true,
+      }
+    );
     res.status(200).send({
       message: 'Update user profile successfully',
       record: result,
@@ -98,13 +97,12 @@ router.post('/update-profile/:username', async (req, res) => {
     });
   }
 });
-
 // search users
 router.get('/users/:key', async function (req, res) {
   const key = req.params.key;
   console.log(key);
   try {
-    const result = await tiktok_users.find({
+    const result = await tiktok__Users.find({
       Username: { $regex: '^' + key, $options: 'i' },
     });
     res.status(200).send({
